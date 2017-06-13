@@ -277,7 +277,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\git\eve-local-chat-analyser\PLHLib\PLHLib.csproj">
+    <ProjectReference Include="..\..\PLHLib\PLHLib.csproj">
       <Project>{44774517-d919-4bc9-ab94-f3087bd25aac}</Project>
       <Name>PLHLib</Name>
     </ProjectReference>

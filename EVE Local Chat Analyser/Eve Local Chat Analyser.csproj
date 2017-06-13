@@ -910,10 +910,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\LiteDB\LiteDB\LiteDB.csproj">
-      <Project>{e808051a-83b7-4fa9-b004-d064ea162b60}</Project>
-      <Name>LiteDB</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PLHLib\PLHLib.csproj">
       <Project>{44774517-d919-4bc9-ab94-f3087bd25aac}</Project>
       <Name>PLHLib</Name>
