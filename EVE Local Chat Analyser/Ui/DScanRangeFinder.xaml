@@ -1,0 +1,22 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.DScanRangeFinder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:EveLocalChatAnalyser.Properties"
+        xmlns:dScanLocator="clr-namespace:EveLocalChatAnalyser.Ui.DScanLocator" mc:Ignorable="d"
+        Title="DScan Locator" 
+        Height="{Binding Source={x:Static properties:Settings.Default}, Path=DScanLocatorSize.Height}" 
+        Width="{Binding Source={x:Static properties:Settings.Default}, Path=DScanLocatorSize.Width}" 
+        Left="{Binding Source={x:Static properties:Settings.Default}, Path=DScanLocatorPosition.X}"
+        Top="{Binding Source={x:Static properties:Settings.Default}, Path=DScanLocatorPosition.Y}"
+        Topmost="True" WindowStartupLocation="CenterOwner" Style="{DynamicResource SkinWindowStyle}">
+    
+    <Window.Resources>
+        <ResourceDictionary Source="../Themes/EveUiWindowStyle.xaml"></ResourceDictionary>
+    </Window.Resources>
+   <Window.Icon>../Resources/wifi_d3d3d3_32.png</Window.Icon>
+    <Grid>
+        <dScanLocator:DScanLocatorControl x:Name="DScanLocatorCtrl"></dScanLocator:DScanLocatorControl>
+    </Grid>
+</Window>

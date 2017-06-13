@@ -1,0 +1,41 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.Settings.CoalitionsSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Coalitions" Height="286.38" Width="267.976" WindowStartupLocation="CenterOwner" Topmost="True" Style="{DynamicResource SkinWindowStyle}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Themes/EveUiWindowStyle.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="ListBoxItem">
+                <Setter Property="ToolTip" Value="{Binding MemberAlliancesStr}"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" TextWrapping="Wrap">
+            Coalitions are automatically retrieved from http://rischwa.net/coalitions .
+            Here you can define your own additional coalitions or overwrite the automatically retrieved ones.
+        </TextBlock>
+        <ListBox x:Name="LstCoalitions" Grid.Row="1"></ListBox>
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <Button x:Name="BtnAdd" Content="_Add"  Click="BtnAdd_Click"></Button>
+            <Button x:Name="BtnEdit" Content="_Edit" Click="BtnEdit_Click" Margin="0,1,0,0"></Button>
+            <Button x:Name="BtnRemove" Content="_Remove" Margin="0,8,0,0" Click="BtnRemove_Click"></Button>
+
+            <Button x:Name="BtnReset" Content="Reset" Margin="0,16,0,0" Click="BtnReset_Click"></Button>
+        </StackPanel>
+        <Button x:Name="BtnOk" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Padding="6,2" Content="_Ok" IsDefault="True" Click="BtnOk_Click" ></Button>
+    </Grid>
+
+</Window>

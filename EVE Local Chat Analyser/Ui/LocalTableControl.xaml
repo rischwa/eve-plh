@@ -1,0 +1,109 @@
+﻿<UserControl x:Class="EveLocalChatAnalyser.Ui.LocalTableControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:properties="clr-namespace:EveLocalChatAnalyser.Properties"
+             xmlns:ui="clr-namespace:EveLocalChatAnalyser.Ui"
+             xmlns:gif="clr-namespace:WpfAnimatedGif;assembly=WpfAnimatedGif"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <DataGrid BorderThickness="0" 
+                          FontSize="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}"
+                          x:Name="DataMain" 
+                          CanUserSortColumns="True"
+                          CanUserAddRows="False" 
+                          AutoGenerateColumns="False" 
+                          IsReadOnly="True"
+                          GridLinesVisibility="None"
+                          Background="Transparent" 
+                          RowHeaderWidth="0" 
+                          SelectionChanged="lstMain_SelectionChanged" 
+                          MouseMove="lstMain_MouseMove"
+                         >
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Margin" Value="0,-3,0,0"></Setter>
+                    <Setter Property="Background" Value="Gainsboro"></Setter>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderThickness" Value="0"></Setter>
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+                    <Setter Property="Background" Value="{Binding BackgroundColor}"></Setter>
+                    <Setter Property="Foreground" Value="{Binding ForegroundColor}"></Setter>
+                </Style>
+            </DataGrid.CellStyle>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ToolTipService.ShowDuration" Value="10000"></Setter>
+                    <Setter Property="ToolTipService.HasDropShadow" Value="False"></Setter>
+                    <Setter Property="ToolTip">
+                        <Setter.Value>
+                            <ToolTip Padding="0">
+                                <ui:KillboardInformationControl />
+                            </ToolTip>
+                        </Setter.Value>
+                    </Setter>
+                    <EventSetter Event="MouseDoubleClick" Handler="HandleDoubleClick" />
+                    <Setter Property="Foreground" Value="{Binding ForegroundColor}"></Setter>
+                    <Setter Property="Visibility" Value="{Binding Visibility}"></Setter>
+                    <Setter Property="Background" Value="{Binding BackgroundColor}"></Setter>
+                    <Setter Property="Margin" Value="0,0,0,0"></Setter>
+                    <Setter Property="BorderThickness" Value="0"></Setter>
+                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                    <Setter Property="FontSize" Value="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}"/>
+                </Style>
+
+            </DataGrid.RowStyle>
+            <DataGrid.ContextMenu>
+                <ContextMenu >
+               
+                    <MenuItem Header="Refresh Killboard Information" Click="ReloadKillboardInformation_Clicked"  />
+                    <!--<Separator></Separator>
+                    <MenuItem Header="Add Own Tag" Click="AddOwnTag_Clicked"  />
+                    <MenuItem Header="Remove Own Tag" Click="RemoveOwnTag_Clicked"  />-->
+                    <Separator></Separator>
+                    <MenuItem Header="Set Own Icon" Click="SetCustomIcon_Clicked"  />
+                    <MenuItem Header="Remove Own Icon" Click="RemoveCustomIcon_Clicked" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn
+                            Width="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}"
+                            Visibility="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=IsShowingFaction, Converter={StaticResource VisibilityConverter}}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image SnapsToDevicePixels="True" Height="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}" Stretch="Uniform" gif:ImageBehavior.RepeatBehavior="Forever"  gif:ImageBehavior.AnimatedSource="{Binding FactionImage}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn 
+                            Width="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}"
+                            Visibility="{Binding Source={x:Static properties:Settings.Default}, Path=IsUsingKillboardAnalysis, Converter={StaticResource VisibilityConverter}}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Height="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}" SnapsToDevicePixels="True" Stretch="Uniform" gif:ImageBehavior.RepeatBehavior="Forever"  gif:ImageBehavior.AnimatedSource="{Binding Image}"/>
+
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="SizeToCells" 
+                                            FontSize="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Corp" Binding="{Binding CorporationInfo}" Width="SizeToCells"
+                                            FontSize="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Ally" Binding="{Binding AllianceInfo}" Width="SizeToCells"
+                                            FontSize="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Coalition" Binding="{Binding CoalitionInfo}" Width="SizeToCells"
+                                            Visibility="{Binding Source={x:Static properties:Settings.Default}, Path=IsShowingCoalitionsColumn, Converter={StaticResource VisibilityConverter}}"
+                                            FontSize="{Binding Source={x:Static properties:Settings.Default},Path=FontSize}">
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,44 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.News"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        Title="News" Height="364.422" Width="787.722" mc:Ignorable="d" WindowStyle="None" ShowInTaskbar="False" Topmost="True" Style="{DynamicResource SkinWindowStyle}" >
+    <Window.Resources>
+        <ResourceDictionary Source="../Themes/EveUiWindowStyle.xaml"></ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="281*"></ColumnDefinition>
+            <ColumnDefinition Width="47*"/>
+            <ColumnDefinition Width="235*"/>
+            <ColumnDefinition Width="31*"/>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <RichTextBox IsReadOnly="True" HorizontalAlignment="Left" Height="Auto" Width="Auto" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="6" FontSize="14" VerticalScrollBarVisibility="Auto" Foreground="LightGray" Margin="0,0,-0.333,0" Grid.RowSpan="2" >
+            <FlowDocument>
+                <Paragraph Margin="Auto,Auto,0,Auto">
+                    <Run Foreground="Red" FontWeight="Bold" Text="Missing Killboard Analysis:"/>
+                    <LineBreak/>
+                    <Run Text="Unfortunately my backend died and I have no time to set it up again. So for the time being you have to live without killboard analysis. I'm very sorry this happened!"/>
+                    <LineBreak/>
+                </Paragraph>
+                <Paragraph Margin="Auto,Auto,0,Auto">
+                    <Run FontWeight="Bold" Text="Please do not contact me in game, as I do not play it atm and don't check my in game mails!"/>
+                </Paragraph>
+                <Paragraph Margin="Auto,Auto,0,Auto">
+                    <Run Text="Thank you for using PLH and cheers"/>
+                    <LineBreak/>
+                    <Run Text="Rischwa"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <Button x:Name="BtnClose" Content="_Close" HorizontalAlignment="Left" Width="Auto" Grid.Row="1" Grid.Column="0" Click="BtnClose_Click" Padding="4,1" IsDefault="True" Margin="0,0.333,0,0" />
+        <Button x:Name="BtnDoNotShowAgain" Content="_Don't show this news again" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="Auto" Grid.Row="1" Grid.Column="5" Click="BtnDoNotShowAgain_Click" Padding="4,1" Margin="0,0,-0.333,0"/>
+    </Grid>
+</Window>

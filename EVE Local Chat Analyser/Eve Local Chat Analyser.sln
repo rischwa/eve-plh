@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eve Local Chat Analyser", "WpfApplication2\Eve Local Chat Analyser.csproj", "{0082A9A2-A0E9-4AF2-8511-75D55333A39B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eve Local Chat Analyser Test", "UnitTestProject1\Eve Local Chat Analyser Test.csproj", "{BCA52763-CC3C-4FFA-9ECE-005D7A1380B6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0082A9A2-A0E9-4AF2-8511-75D55333A39B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0082A9A2-A0E9-4AF2-8511-75D55333A39B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0082A9A2-A0E9-4AF2-8511-75D55333A39B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0082A9A2-A0E9-4AF2-8511-75D55333A39B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCA52763-CC3C-4FFA-9ECE-005D7A1380B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCA52763-CC3C-4FFA-9ECE-005D7A1380B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCA52763-CC3C-4FFA-9ECE-005D7A1380B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCA52763-CC3C-4FFA-9ECE-005D7A1380B6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

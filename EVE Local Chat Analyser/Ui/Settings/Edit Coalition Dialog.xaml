@@ -1,0 +1,29 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.Settings.EditCoalitionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Coalition" Height="452" Width="369" Topmost="True" ShowInTaskbar="False" Style="{DynamicResource SkinWindowStyle}">
+    <Window.Resources>
+        <ResourceDictionary Source="../../Themes/EveUiWindowStyle.xaml"></ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Label Content="Coalition Name:" Grid.Row="0" Grid.Column="0" ToolTip="Name of the coalition (shown in the coalition column)"></Label>
+        <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtName" ToolTip="Name of the coalition (shown in the coalition column)" TabIndex="0"></TextBox>
+        <Label Content="Member Alliances:" Grid.Row="1" Grid.Column="0" ToolTip="Comma separated list of member alliances"></Label>
+        <TextBox Grid.Row="2" Grid.ColumnSpan="2" TextWrapping="Wrap" AcceptsReturn="True" ToolTip="Comma separated list of member alliances" x:Name="TxtMemberAlliances" TabIndex="1"></TextBox>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="1">
+            <Button DockPanel.Dock="Right" Content="_Ok" Padding="4,2" Margin="0,0,4,0" IsDefault="True" TabIndex="2" Click="Button_Click"></Button>
+            <Button DockPanel.Dock="Right" Content="_Cancel" Padding="4,2" IsCancel="True" TabIndex="3" ></Button>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="EveLocalChatAnalyser.Ui.DScanLocator.DScanLocatorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+             xmlns:dScanLocator="clr-namespace:EveLocalChatAnalyser.Ui.DScanLocator"
+             mc:Ignorable="d" 
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <!--<UserControl.Resources>
+        <Style x:Key="Itemstyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="Background" Value="{Binding BackgroundColor}"/>
+            <Setter Property="Visibility" Value="{Binding Visibility}"/>
+        </Style>
+    </UserControl.Resources>-->
+    <Grid>
+        <xctk:BusyIndicator IsBusy="False" x:Name="DScanLocatorBusyIndicator" Grid.Row="0">
+            <xctk:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <TextBlock Text="Click to activate" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </DataTemplate>
+            </xctk:BusyIndicator.BusyContentTemplate>
+            <xctk:BusyIndicator.ProgressBarStyle>
+                <Style TargetType="ProgressBar">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </xctk:BusyIndicator.ProgressBarStyle>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="380*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="60*"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" Name="LblTarget"></Label>
+                <ListView  Grid.Column="0" Grid.Row="1" ItemsSource="{Binding CurrentShips}" Name="LstTargets" MouseDoubleClick="ListView_MouseDoubleClick">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <ListView  Grid.Row="1" ItemsSource="{Binding CurrentRangeItems}" Name="LstRangeItems" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Item.Name}" />
+                            <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Item.Type}"/>
+                            <GridViewColumn Header="Distance" DisplayMemberBinding="{Binding Item.Distance}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch"></GridSplitter>
+                <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Grid.Row="3" Grid.Column="0" Name="TxtStatus" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch">
+                </TextBox>
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Content="_POS Mapper" x:Name="BtnPosMapper" Padding ="4" Click="BtnPosMapper_Click"></Button>
+
+                    <Button  Padding="4" Content="Reset but Keep _Anoms" ToolTip="If you have added anoms, you can reset the scan, but keep the anoms added,&#x0a;so you don't have to add them again as long as you scan from the same position." FontSize="14" Grid.Column="2" x:Name="BtnResetButKeepAnoms" IsEnabled="False" Click="BtnResetButKeepAnoms_Click"></Button>
+                    <Button  Padding="4" Content="_Reset Everything" Click="Button_Click" FontSize="14" Grid.Column="3" Margin="10,0,0,0"></Button>
+                </Grid>
+            </Grid>
+        </xctk:BusyIndicator>
+       
+    </Grid>
+</UserControl>

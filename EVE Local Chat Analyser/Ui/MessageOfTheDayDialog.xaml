@@ -1,0 +1,27 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.MessageOfTheDayDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Message of the day" Height="290" Width="432" WindowStartupLocation="CenterOwner" ShowActivated="False" SizeToContent="Height" ShowInTaskbar="False" Topmost="True" Style="{DynamicResource SkinWindowStyle}">
+    <Window.Resources>
+        <ResourceDictionary Source="../Themes/EveUiWindowStyle.xaml"></ResourceDictionary>
+    </Window.Resources>
+    <StackPanel >
+        <RichTextBox x:Name="TextBox" >
+            <RichTextBox.Resources>
+                <Style TargetType="Hyperlink">
+                    <Setter Property="Cursor" Value="Hand" />
+                    <EventSetter Event="MouseLeftButtonDown" Handler="Hyperlink_MouseLeftButtonDown" />
+                </Style>
+            </RichTextBox.Resources>
+        </RichTextBox>
+        <Grid Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="OkButton" Content="_Ok" Grid.Column="0" Width="40" Padding="4,2" Click="OkButton_Click" IsDefault="true" />
+            <Button x:Name="DontShowAgainButton" Content="_Don't show this message again" Padding="4,2" Grid.Column="2" Click="DontShowAgainButton_Click"/>
+        </Grid>
+    </StackPanel>
+</Window>

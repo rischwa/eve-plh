@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="EveLocalChatAnalyser.Ui.KillboardInformationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:eve="clr-namespace:EveLocalChatAnalyser"
+             xmlns:positionTracking="clr-namespace:EveLocalChatAnalyser.Utilities.PositionTracking"
+             xmlns:properties="clr-namespace:EveLocalChatAnalyser.Properties"
+             mc:Ignorable="d"  Height="Auto" MinWidth="220" BorderThickness="0" FontSize="{Binding Source={x:Static properties:Settings.Default}, Path=FontSize}" >
+    <UserControl.Resources>
+        <ResourceDictionary Source="../Themes/EveUiWindowStyle.xaml"></ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.Background>
+        <SolidColorBrush Color="{DynamicResource WindowBackground}"></SolidColorBrush>
+    </UserControl.Background>
+    <StackPanel Orientation="Vertical" Margin="0,0,0,4">
+        <StackPanel Background="{DynamicResource ContainerBackgroundBrush}">
+            <Label Content="Statistics" Padding="0,-5" Foreground="White" VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" />
+        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition ></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="15*"></ColumnDefinition>
+                <ColumnDefinition Width="151*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="K/D:" Padding="0,-5" Margin="4,0,0.333,0"></Label>
+            <Label Grid.Row="0" Content="{Binding Path=KillsDeaths}" Foreground="White" Margin="45,0,0.333,0" Padding="0,-5" />
+            <Label Grid.Row="0" Grid.Column="1" Content="{Binding Path=KillDeathRatio}" Foreground="White" Padding="0,-5" Margin="7.667,0,-0.001,0" Grid.ColumnSpan="3"></Label>
+            <Label Grid.Row="1" Grid.Column="0" Content="Points:" Padding="0,-5" Margin="4,0,6.333,0"></Label>
+            <Label Grid.Row="1" Content="{Binding Path=Points}" Foreground="White" Padding="0,-5" Margin="45,0,0.333,0"/>
+            <Label Grid.Row="1" Grid.Column="1" Content="{Binding Path=PointsRatio}" Foreground="White" Padding="0,-5" Grid.ColumnSpan="3" Margin="7.667,0,-0.001,0"></Label>
+            <Label Grid.Row="2" Grid.Column="0" Content="ISK:" Padding="0,-5" Margin="4,0,0.333,0"></Label>
+            <Label Grid.Row="2" Content="{Binding Path=Isk}" Foreground="White" Margin="45,0,0.333,0" Padding="0,-5"/>
+            <Label Grid.Row="2" Grid.Column="1" Content="{Binding Path=IskRatio}" Foreground="White" Padding="0,-5" Grid.ColumnSpan="3" Margin="7.667,0,-0.001,0"  ></Label>
+        </Grid>
+
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Avg. #attackers: " Padding="0" Margin="4,4,0,0" VerticalAlignment="Top" ToolTip="This shows the average number of attackers on recent kills of this character" />
+            <Label Padding="0,0" Margin="0,4,0,0" Foreground="White" FontWeight="Bold" VerticalAlignment="Top" Content="{Binding Path=AverageNumberOfAttackers}" ToolTip="This shows the average number of attackers on recent kills of this character" />
+        </StackPanel>
+
+        <StackPanel  Background="{DynamicResource ContainerBackgroundBrush}">
+            <Label Content="Last Killboard Activity" Padding="0,-5" Foreground="White" VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" />
+        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="1" Grid.Column="0" Content="Time:" Padding="0,-5" Margin="4,0,0,0"></Label>
+            <Label Grid.Row="1" Grid.Column="1" Content="{Binding Path=LastSeenTime}" Foreground="{Binding Path=LastSeenTimeForeground}" Margin="4,0,8,0" Padding="0,-5" ></Label>
+            <Label Grid.Row="0" Grid.Column="0" Content="Type:" Padding="0,-5" Margin="4,0,0,0"></Label>
+            <Label Grid.Row="0" Grid.Column="1" Content="{Binding Path=LastSeenType}" Foreground="{Binding Path=LastSeenTypeForeground}" Margin="4,0,8,0"  Padding="0,-5" ></Label>
+            <Label Grid.Row="0" Grid.Column="2" Content="Ship:" Padding="0,-5" Margin="4,0,0,0"></Label>
+            <Label Grid.Row="0" Grid.Column="3" Content="{Binding Path=LastSeenShip}" Foreground="White" Margin="4,0,8,0" Padding="0,-5" ></Label>
+            <Label Grid.Row="1" Grid.Column="2" Content="Weapon:" Padding="0,-5" Margin="4,0,0,0"></Label>
+            <Label Grid.Row="1" Grid.Column="3" Content="{Binding Path=LastSeenWeapon}" Foreground="White" Margin="4,0,8,0" Padding="0,-5" ></Label>
+        </Grid>
+
+        <StackPanel  Background="{DynamicResource ContainerBackgroundBrush}" Margin="0,8,0,0">
+            <Label Content="Favourite Ships" Padding="0,-5" Foreground="White" VerticalAlignment="Top"  HorizontalAlignment="Center" FontWeight="Bold" />
+        </StackPanel>
+
+
+        <TextBlock Name="TxtFavouriteShips" Text="{Binding Path=FavouriteShips}" Foreground="White" Margin="4,4,0,0"></TextBlock>
+        <StackPanel Background="{DynamicResource ContainerBackgroundBrush}" Margin="0,8,0,0">
+            <Label Content="Tags" Padding="0,-5" Foreground="White" VerticalAlignment="Top"  HorizontalAlignment="Center" FontWeight="Bold" />
+        </StackPanel>
+        <TextBlock Name="TxtTags" Text="{Binding Path=Tags}" FontWeight="Bold" Foreground="White" Margin="4,4,0,0"></TextBlock>
+        <StackPanel  Background="{DynamicResource ContainerBackgroundBrush}" Name="HeaderAssociations" ToolTip="This shows corporations and alliances this character is most likely associated to (e.g. an out of corp alt-char)" Margin="0,8,0,0">
+            <Label Content="Associations" Padding="0,-5" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Center" FontWeight="Bold" />
+        </StackPanel>
+        <TextBlock Name="TxtAssociations" Margin="4,4,0,0" Text="{Binding Path=Associations}" Foreground="Crimson" FontWeight="Bold"></TextBlock>
+        <StackPanel  Background="{DynamicResource ContainerBackgroundBrush}"  Margin="0,8,0,0">
+            <Label Content="Sightings" Padding="0,-5" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Center" FontWeight="Bold" />
+        </StackPanel>
+        <TextBlock Name="TxtSightings" Margin="4,4,0,0" Text="{Binding Path=Sightings}"></TextBlock>
+    </StackPanel>
+</UserControl>

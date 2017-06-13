@@ -1,0 +1,29 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.Wormholes.AddWormholeConnectionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Connection through Wormhole" Height="102.667" Width="240.667" WindowStartupLocation="CenterOwner" Topmost="True" >
+    <!--Style="{DynamicResource SkinWindowStyle}"-->
+    <!--<Window.Resources>
+        <ResourceDictionary Source="../../Themes/EveUiWindowStyle.xaml"></ResourceDictionary>
+    </Window.Resources>-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Label Content="To:" Margin="2" HorizontalAlignment="Left"></Label>
+            <ComboBox x:Name="CboSystem" IsEditable="True" IsTextSearchCaseSensitive="False" IsTextSearchEnabled="True"
+                      Margin="2" HorizontalAlignment="Stretch" Width="180">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </ComboBox>
+        </StackPanel>
+        <Button HorizontalAlignment="Left" Content="_OK" Grid.Row="2" Padding="8,4" Margin="2" IsDefault="True" x:Name="BtnOk" Click="BtnOk_OnClick"></Button>
+        <Button HorizontalAlignment="Right" Content="_Cancel" Grid.Row="2" Padding="4" Margin="2" IsCancel="True" x:Name="BtnCancel" Click="BtnCancel_OnClick"></Button>
+    </Grid>
+</Window>

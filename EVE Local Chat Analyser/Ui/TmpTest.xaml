@@ -1,0 +1,86 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.TmpTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EveLocalChatAnalyser.Ui"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:map="clr-namespace:EveLocalChatAnalyser.Ui.Map"
+        mc:Ignorable="d"
+        Title="TmpTest" Height="300" Width="300" AllowsTransparency="True">
+    <Window.Resources>
+
+        <ControlTemplate x:Key="ControlTemplate1">
+            <Grid ClipToBounds="true" 
+                          SnapsToDevicePixels="true" 
+                          KeyboardNavigation.TabNavigation="Local"
+                          >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!--Following border is required to catch mouse events-->
+
+                <Border Background="Transparent" Grid.RowSpan="2"/>
+                <Border x:Name="ContentPanel" 
+                                BorderBrush="DarkBlue"
+                                BorderThickness="5" 
+                                Background="Red"
+                                Grid.Column="0" 
+                                KeyboardNavigation.DirectionalNavigation="Contained" 
+                                Grid.Row="0" 
+                                KeyboardNavigation.TabIndex="2"
+                                KeyboardNavigation.TabNavigation="Cycle">
+                    <ContentPresenter x:Name="PART_SelectedContentHost"
+                                              ContentSource="SelectedContent" 
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                </Border>
+                <xcad:AnchorablePaneTabPanel x:Name="HeaderPanel" Margin="20,0,20,20" IsItemsHost="true" Grid.Row="1" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"/>
+                <TextBlock Grid.Row="2">alsdjfalskdjfl;las;dkjflsadl;kfjlasdlkfjldsalkfjasld;fkjdskfj</TextBlock>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+    </Window.Resources>
+    <Grid>
+
+        <xcad:DockingManager x:Name="DockManager" Grid.Row="0" AnchorablePaneTemplate="{DynamicResource ControlTemplate1}" >
+
+            <xcad:LayoutRoot>
+
+                <xcad:LayoutPanel>
+                    <xcad:LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="250">
+                        <xcad:LayoutAnchorablePane DockWidth="250"  >
+                            <xcad:LayoutAnchorable Title="Last Local" x:Name="LastLocalAnchorable"
+                                                   CanClose="False" CanHide="True" ContentId="LastLocalAnchorable">
+                                <TextBlock >alskdfj</TextBlock>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutAnchorablePane>
+                        <xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorable Title="Ships on DScan"
+                                                   CanClose="False" CanHide="True" x:Name="DScanAggregator"
+                                                   ContentId="ShipsOnDScan">
+                                <TextBlock>alsk23dfj</TextBlock>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutAnchorablePane>
+
+                    </xcad:LayoutAnchorablePaneGroup>
+                    <xcad:LayoutDocumentPane x:Name="MapPane">
+                        <xcad:LayoutDocument x:Name="MapDocument" Title="Map" CanClose="False" ContentId="Map">
+
+                            <TextBlock>2323</TextBlock>
+                        </xcad:LayoutDocument>
+                    </xcad:LayoutDocumentPane>
+                </xcad:LayoutPanel>
+
+            </xcad:LayoutRoot>
+        </xcad:DockingManager>
+
+    </Grid>
+</Window>

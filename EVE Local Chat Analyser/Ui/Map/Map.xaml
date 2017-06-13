@@ -1,0 +1,684 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.Map.Map"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:graphxctrl="clr-namespace:GraphX.Controls;assembly=GraphX.Controls"
+        xmlns:gxl="clr-namespace:GraphX;assembly=GraphX.Controls"
+        xmlns:uiMap="clr-namespace:EveLocalChatAnalyser.Ui.Map" xmlns:ui="clr-namespace:EveLocalChatAnalyser.Ui"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+        xmlns:properties="clr-namespace:EveLocalChatAnalyser.Properties"
+        xmlns:posMapper="clr-namespace:EveLocalChatAnalyser.Ui.PosMapper"
+        xmlns:dScanLocator="clr-namespace:EveLocalChatAnalyser.Ui.DScanLocator"
+        xmlns:local="clr-namespace:EveLocalChatAnalyser.Utilities.RouteFinding"
+        xmlns:wormholes="clr-namespace:EveLocalChatAnalyser.Ui.Wormholes"
+        xmlns:settings="clr-namespace:EveLocalChatAnalyser.Ui.Settings"
+        Title="Map"
+        Height="{Binding Source={x:Static properties:Settings.Default}, Path=MapSize.Height}"
+        Width="{Binding Source={x:Static properties:Settings.Default}, Path=MapSize.Width}"
+        Left="{Binding Source={x:Static properties:Settings.Default}, Path=MapPosition.X}"
+        Top="{Binding Source={x:Static properties:Settings.Default}, Path=MapPosition.Y}"
+        Topmost="True"
+        AllowsTransparency="True" Background="{DynamicResource WindowBackgroundBrush}"
+        Style="{DynamicResource SkinWindowStyle}"
+        Icon="{StaticResource MapImage}"
+         
+        FocusManager.FocusedElement="{Binding RelativeSource={x:Static RelativeSource.Self}, Mode=OneTime}"  MinWidth="200" MinHeight="16">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static uiMap:Map.UpdateTheraCommand}" CanExecute="CommandUpdateThera_CanExecute"
+                        Executed="CommandUpdateThera_Executed" />
+    </Window.CommandBindings>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Themes/EveUiWindowStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <wormholes:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+            <ui:ColorConverter x:Key="ColorConverter" />
+            <BitmapImage x:Key="JumpImage" UriSource="..\..\Resources\jump.png" />
+            <BitmapImage x:Key="HomeImage" UriSource="..\..\Resources\home.png" />
+            <BitmapImage x:Key="RedCrossImage" UriSource="..\..\Resources\redcross.png" />
+            <BitmapImage x:Key="PodImage" UriSource="..\..\Resources\pod.png" />
+            <BitmapImage x:Key="RifterImage" UriSource="..\..\Resources\rifter.png" />
+            <BitmapImage x:Key="WrenchImage" UriSource="..\..\Resources\wrench.png" />
+            <BitmapImage x:Key="Cog16Image" UriSource="..\..\Resources\cog_16x16.png" />
+            <SolidColorBrush x:Key="TriStateColorBrush"
+                             Color="{Binding Source={x:Static properties:Settings.Default},Path=MapTriStateColor}" />
+
+            <ContextMenu x:Key="MapContextMenu">
+                <MenuItem x:Name="ResetMenuItem" Header="Reset" Click="ResetMenuItem_OnClick" />
+                <Separator />
+                <MenuItem x:Name="RelayoutDefaultMenuItem" Header="Relayout (default)"
+                          Click="RelayoutDefaultMenuItem_OnClick" />
+                <MenuItem x:Name="RelayoutHQMenuItem" Header="Relayout (High Quality - slow)"
+                          Click="RelayoutHQMenuItem_OnClick" />
+                <Separator />
+                <MenuItem Command="{x:Static uiMap:Map.UpdateTheraCommand}"
+                          Header="Update connections to Thera (http://eve-scout.com)" />
+            </ContextMenu>
+
+            <ContextMenu x:Key="WormholeConnectionMenu">
+                <MenuItem x:Name="EditWormholeConnectionMenuItem" Header="Edit"
+                          Click="EditWormholeConnectionMenuItem_OnClick" />
+                <Separator />
+                <MenuItem x:Name="DeleteWormholeConnectionMenuItem" Header="Remove"
+                          Click="DeleteWormholeConnectionMenuItem_OnClick" />
+            </ContextMenu>
+
+            <ContextMenu x:Key="SolarSystemContextMenu">
+                <MenuItem x:Name="OpenSolarSystemKillboardMenuItem" Header="See on Killboard"
+                          Click="OpenSolarSystemKillboardMenuItem_OnClick" />
+                <Separator />
+                <MenuItem x:Name="AddWormholeConnectionMenuItem" Header="Add Wormhole Connection"
+                          Click="AddWormholeConnectionMenuItem_OnClick" />
+                <Separator />
+                <MenuItem x:Name="SetDestinatioMenuItem" Header="Set Destination"
+                          Click="SetDestinationMenuItem_OnClick" />
+                <Separator />
+                <MenuItem x:Name="LoadRegionMenuItem" Header="Load Region"
+                          Click="LoadRegionMenuItem_OnClick" />
+
+            </ContextMenu>
+
+
+            <Style TargetType="{x:Type graphxctrl:EdgeControl}">
+                <Setter Property="DashStyle" Value="{Binding DashStyle}" />
+                <Setter Property="ToolTipService.ShowDuration" Value="15000" />
+
+                <Setter Property="ToolTip" Value="{Binding ToolTip}" >
+                </Setter>
+                <Setter Property="SelfLoopIndicatorOffset" Value="10,10" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type graphxctrl:EdgeControl}">
+                            <Grid>
+                                <Path Stroke="{Binding FinalStrokeColor}"
+                                      StrokeThickness="3"
+                                      x:Name="PART_edgePath" />
+
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <DataTrigger Binding="{Binding SystemConnectionTypeStr}" Value="Wormhole">
+                                    <Setter Property="StrokeThickness" Value="7" />
+                                    <Setter Property="ContextMenu" Value="{StaticResource WormholeConnectionMenu}" />
+
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding SystemConnectionTypeStr}" Value="EveScoutWormhole">
+                                    <Setter Property="StrokeThickness" Value="7" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                            <ControlTemplate.Resources>
+                                <Style TargetType="ToolTip" BasedOn="{StaticResource {x:Type ToolTip}}">
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+
+                            </ControlTemplate.Resources>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--<Style TargetType="{x:Type graphxctrl:EdgeControl}">
+				<Setter Property="StrokeThickness" Value="3" />
+                <Setter Property="DashStyle" Value="{Binding DashStyle}" />
+
+				<Setter Property="Foreground" Value="{Binding StrokeColor}" />
+
+				<Setter Property="ToolTipService.ShowDuration" Value="15000" />
+				<Setter Property="ToolTip" Value="{Binding ToolTip}" />
+                
+                
+
+				
+			</Style>-->
+
+            <Style TargetType="{x:Type graphxctrl:VertexControl}">
+                <Setter Property="graphxctrl:DragBehaviour.IsDragEnabled"
+                        Value="True" />
+
+                <Setter Property="ContextMenu" Value="{StaticResource SolarSystemContextMenu}" />
+                <Setter Property="ToolTipService.ShowDuration" Value="15000" />
+                <Setter Property="ToolTip">
+                    <Setter.Value>
+                        <ToolTip >
+                            <uiMap:SystemTooltipControl />
+                        </ToolTip>
+                    </Setter.Value>
+                </Setter>
+
+                <Setter Property="MinWidth" Value="80" />
+
+                <Setter Property="graphxctrl:DragBehaviour.UpdateEdgesOnMove"
+                        Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type graphxctrl:VertexControl}">
+                            <Grid>
+                                <DockPanel MaxWidth="150" Height="56">
+                                    <Border  DockPanel.Dock="Bottom" Background="{Binding BackgroundColor, Mode=OneWay}" CornerRadius="4" Margin="0 1 0 0">
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding Name, Mode=OneTime}" FontSize="16" Foreground="{Binding ForegroundColor, Mode=OneWay}"/>
+                                    </Border>
+                                   
+                                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Width="35">
+                                        <Image Source="{Binding FactionImage, Mode=OneTime}" VerticalAlignment="Top"
+                                               HorizontalAlignment="Right"
+                                               Height="20" Margin="10 0 0 0"
+                                               Visibility="{Binding FactionwareImageVisibility, Mode=OneTime}" />
+                                        <TextBlock Text="{Binding SystemTypeText, Mode=OneTime}"
+                                                   TextAlignment="Right"
+                                                   FontStyle="Italic"
+                                                   FontWeight="Light"
+                                                   FontSize="10"
+                                                   VerticalAlignment="Top"
+                                                   HorizontalAlignment="Right"
+                                                   Foreground="{x:Static Brushes.LightSkyBlue}"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Width="35"
+                                                DockPanel.Dock="Right" />
+                                    <Canvas Width="32">
+                                        <Ellipse Width="32" Height="32" Stroke="{Binding CircleBorderColor, Mode=OneWay}"
+                                                 StrokeThickness="3" />
+                                        <Ellipse Width="20" Height="20" Canvas.Top="6" Canvas.Left="6"
+                                                 Fill="{Binding InnerCircleColor, Mode=OneWay}" />
+                                        <Line X1="6" X2="26" Y1="6" Y2="26"
+                                              Stroke="{DynamicResource TriStateColorBrush}" StrokeThickness="2"
+                                              Visibility="{Binding CrossLine2Visibility, Mode=OneWay}" />
+                                        <Line X2="6" X1="26" Y1="6" Y2="26"
+                                              Stroke="{DynamicResource TriStateColorBrush}" StrokeThickness="2"
+                                              Visibility="{Binding CrossLine1Visibility, Mode=OneWay}" />
+                                    </Canvas>
+
+                                </DockPanel>
+                            </Grid>
+                            <!--<ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard Storyboard="{StaticResource HoverOff}"
+										                 x:Name="HoverOff_BeginStoryboard" />
+                                    </Trigger.ExitActions>
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource HoverOn}" />
+                                    </Trigger.EnterActions>
+
+                                </Trigger>
+                            </ControlTemplate.Triggers>-->
+                        </ControlTemplate>
+                    </Setter.Value>
+
+                </Setter>
+            </Style>
+            <Style TargetType="{x:Type xcad:LayoutAnchorSideControl}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+            </Style>
+            <Style TargetType="{x:Type xcad:LayoutAnchorablePaneControl}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+            </Style>
+            <Style TargetType="{x:Type xcad:LayoutDocumentPaneControl}">
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+            <!--<Style TargetType="{x:Type xcad:LayoutDocumentControl}">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>-->
+            <Style TargetType="MenuItem">
+                <Setter Property="Background" Value="#FF555555" />
+            </Style>
+            <Style TargetType="Menu">
+                <Setter Property="Background" Value="#FF555555" />
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+            </Style>
+            <Style x:Key="AvalonDock_ThemeMetro_DocumentPaneControlStyle"
+                   TargetType="{x:Type xcad:LayoutDocumentPaneControl}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type xcad:LayoutDocumentPaneControl}">
+                            <Grid ClipToBounds="true" SnapsToDevicePixels="true"
+                                  KeyboardNavigation.TabNavigation="Local">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <!--Following border is required to catch mouse events-->
+                                <Border Background="Transparent" Grid.RowSpan="2" />
+                                <Grid Panel.ZIndex="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <xcad:DocumentPaneTabPanel x:Name="HeaderPanel" Grid.Column="0" IsItemsHost="true"
+                                                               Margin="2,0,2,0"
+                                                               Grid.Row="0" KeyboardNavigation.TabIndex="1" />
+                                    <xcad:DropDownButton
+                                        x:Name="MenuDropDownButton"
+                                        Grid.Row="0"
+                                        Focusable="False"
+                                        VerticalAlignment="Center"
+                                        Grid.Column="1">
+                                        <xcad:DropDownButton.DropDownContextMenu>
+                                            <xcad:ContextMenuEx
+                                                ItemsSource="{Binding Model.ChildrenSorted, RelativeSource={RelativeSource TemplatedParent}}">
+                                                <xcad:ContextMenuEx.ItemContainerStyle>
+                                                    <Style TargetType="{x:Type xcad:MenuItemEx}"
+                                                           BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                        <Setter Property="HeaderTemplate"
+                                                                Value="{Binding Path=Root.Manager.DocumentPaneMenuItemHeaderTemplate}" />
+                                                        <Setter Property="HeaderTemplateSelector"
+                                                                Value="{Binding Path=Root.Manager.DocumentPaneMenuItemHeaderTemplateSelector}" />
+                                                        <Setter Property="IconTemplate"
+                                                                Value="{Binding Path=Root.Manager.IconContentTemplate}" />
+                                                        <Setter Property="IconTemplateSelector"
+                                                                Value="{Binding Path=Root.Manager.IconContentTemplateSelector}" />
+
+                                                    </Style>
+                                                </xcad:ContextMenuEx.ItemContainerStyle>
+                                            </xcad:ContextMenuEx>
+                                        </xcad:DropDownButton.DropDownContextMenu>
+                                        <!--<Image Source="/Resources/appbar.window.maximize.png"/>-->
+                                    </xcad:DropDownButton>
+
+                                    <Line Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Margin="0,-6,0,0"
+                                          VerticalAlignment="Center" StrokeThickness="2"
+                                          X2="{Binding Path=ActualWidth, RelativeSource={RelativeSource Self}}"
+                                          Stroke="{DynamicResource BorderBrush}" />
+                                </Grid>
+                                <Border x:Name="ContentPanel"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Background="{TemplateBinding Background}"
+                                        Grid.Column="0"
+                                        KeyboardNavigation.DirectionalNavigation="Contained"
+                                        Grid.Row="1"
+                                        KeyboardNavigation.TabIndex="2"
+                                        KeyboardNavigation.TabNavigation="Cycle"
+                                        Padding="0,1,0,2">
+                                    <ContentPresenter x:Name="PART_SelectedContentHost"
+                                                      ContentSource="SelectedContent"
+                                                      Margin="0,2,0,2"
+                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <!--<Trigger Property="IsMouseOver" SourceName="MenuDropDownButton" Value="True">
+                                    <Setter Property="Content" TargetName="MenuDropDownButton">
+                                        <Setter.Value>
+                                            <Image Source="/Resources/appbar.app.remove.png"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsChecked" SourceName="MenuDropDownButton" Value="True">
+                                    <Setter Property="Content" TargetName="MenuDropDownButton">
+                                        <Setter.Value>
+                                            <Image Source="/Resources/appbar.window.minimize.png"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>-->
+
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Foreground"
+                                            Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                                </Trigger>
+                                <DataTrigger
+                                    Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Model.ChildrenCount}"
+                                    Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed" TargetName="MenuDropDownButton" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="{x:Type TabItem}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+                            <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+                            <Setter Property="Padding" Value="4" />
+                            <Setter Property="Margin" Value="2,0,2,0" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type TabItem}">
+                                        <Grid SnapsToDevicePixels="true"
+                                              Margin="0,4,4,4">
+
+                                            <Border x:Name="Bd"
+                                                    Grid.Row="0"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="1,1,0,1"
+                                                    Background="{DynamicResource ButtonBackgroundBrush}"
+                                                    CornerRadius="5,5,0,0"
+                                                    Padding="4,8" />
+                                            <ContentPresenter
+                                                x:Name="Content"
+                                                Grid.Row="0"
+                                                Margin="6,2"
+                                                ContentSource="Header"
+                                                HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                                VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                                RecognizesAccessKey="True"
+
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                                <ContentPresenter.Resources>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground"
+                                                                Value="{DynamicResource ForegroundBrush}" />
+                                                    </Style>
+                                                </ContentPresenter.Resources>
+                                            </ContentPresenter>
+
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="Selector.IsSelected"
+                                                     Value="true">
+
+                                                <Setter Property="Panel.ZIndex"
+                                                        Value="1" />
+                                            </Trigger>
+                                            <Trigger Property="Selector.IsSelected"
+                                                     Value="false">
+                                                <Setter TargetName="Bd" Property="Background"
+                                                        Value="{DynamicResource ContainerBackgroundBrush}" />
+                                                <Setter Property="Background"
+                                                        Value="{DynamicResource ContainerBackgroundBrush}" />
+                                                <Setter Property="Panel.ZIndex"
+                                                        Value="1" />
+                                            </Trigger>
+                                            <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                <Setter Property="BorderBrush"
+                                                        Value="{DynamicResource BorderBrush}" />
+                                                <Setter Property="Foreground"
+                                                        Value="{DynamicResource ForegroundSelectedBrush}" />
+                                                <Setter Property="Panel.ZIndex"
+                                                        Value="1" />
+                                            </DataTrigger>
+
+                                            <DataTrigger Binding="{Binding IsActive}" Value="False">
+                                                <Setter TargetName="Bd" Property="Background"
+                                                        Value="{DynamicResource ContainerBackgroundBrush}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+                                                <Setter Property="Panel.ZIndex"
+                                                        Value="1" />
+                                            </DataTrigger>
+
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsMouseOver" Value="true" />
+                                                    <Condition Property="Selector.IsSelected" Value="false" />
+                                                </MultiTrigger.Conditions>
+                                                <!--<Setter Property="BorderBrush" Value="{DynamicResource AvalonDock_ThemeMetro_BaseColor4}"/>-->
+                                                <Setter Property="Foreground"
+                                                        Value="{DynamicResource ForegroundSelectedBrush}" />
+                                                <Setter Property="Panel.ZIndex" Value="0" />
+                                            </MultiTrigger>
+                                            <Trigger Property="IsEnabled" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="false">
+                                                <Setter Property="Foreground"
+                                                        Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <xcad:LayoutDocumentTabItem Model="{Binding}" />
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Setter Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <xcad:LayoutDocumentControl Model="{Binding}" />
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="{x:Type xcad:AnchorablePaneTitle}">
+                <Setter Property="Background" Value="{DynamicResource ContainerBackgroundBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+            </Style>
+
+
+        </ResourceDictionary>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Menu IsMainMenu="True" Grid.Row="0">
+            <MenuItem Header="_Views" x:Name="ViewsMenuItem">
+                <MenuItem Header="Last Local" IsCheckable="True" Name="MenuLastLocal"
+                          DataContext="{Binding ElementName=LastLocalAnchorable}"
+                          IsChecked="{Binding IsVisible, Mode=TwoWay}" />
+                <MenuItem Header="Local of selected system" Name="MenuSelectedLocalAnchorable" IsCheckable="True"
+                          DataContext="{Binding ElementName=SelectedLocalAnchorable}"
+                          IsChecked="{Binding IsVisible, Mode=TwoWay}" />
+                <MenuItem Header="Last kills in selected system" Name="MenuLastKillsInSystem" IsCheckable="True"
+                          DataContext="{Binding ElementName=LastKillsInSystem}"
+                          IsChecked="{Binding IsVisible, Mode=TwoWay}" />
+                <MenuItem Header="Notes for selected system" Name="MenuSelectedSystemNotesAnchorable"
+                          IsCheckable="True" DataContext="{Binding ElementName=SelectedSystemNotesAnchorable}"
+                          IsChecked="{Binding IsVisible, Mode=TwoWay}" />
+                <MenuItem Header="DScan Aggregator" IsCheckable="True" Name="MenuDScanAggregator"
+                          DataContext="{Binding ElementName=DScanAggregator}"
+                          IsChecked="{Binding IsVisible, Mode=TwoWay}" />
+                <MenuItem Header="POS Mapper" IsCheckable="True" Name="MenuPosMapper"
+                          DataContext="{Binding ElementName=PosMapperAnchorable}"
+                          IsChecked="{Binding IsVisible, Mode=TwoWay}" />
+                <MenuItem Header="DScan Locator" IsCheckable="True" Name="MenuDScanLocator"
+                          DataContext="{Binding ElementName=DScanLocatorAnchorable}"
+                          IsChecked="{Binding IsVisible, Mode=TwoWay}" />
+
+                <MenuItem Header="Map Settings" IsCheckable="True" Name="MenuMapSettings"
+                          DataContext="{Binding ElementName=MapSettingsAnchorable}"
+                          IsChecked="{Binding IsVisible, Mode=TwoWay}" />
+            </MenuItem>
+
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Go to System: " />
+                <ComboBox x:Name="CboSystemNames" Width="120" DropDownClosed="CboSystemNames_OnDropDownClosed"
+                          IsTextSearchEnabled="True" IsEditable="True" StaysOpenOnEdit="True"
+                          ToolTip="Select a specific system to view it and its surroundings on the map">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+                <ToggleButton x:Name="ToggleFollowCharacter" Content="Follow Character" IsChecked="True" Padding="4,0"
+                              Margin="8,0,0,0" ToolTip="If active, the map follows your characters in game position" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Destination: " />
+                <ComboBox x:Name="CboDestinationSystemNames" Width="120" StaysOpenOnEdit="True"
+                          DropDownClosed="CboDestinationSystemNames_OnDropDownClosed" IsTextSearchEnabled="True"
+                          IsEditable="True" ToolTip="Select a specific system to set as destination of a route">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+                <xctk:DropDownButton Grid.Row="1" FontSize="14" HorizontalAlignment="Left"
+                                     Margin="4,0,0,0" Padding="6,0,6,0" VerticalAlignment="Stretch"
+                                     x:Name="BtnRouteSettings"
+                                     ToolTip="Route Planner Settings"
+                                     Background="{DynamicResource ContainerBackgroundBrush}">
+                    <Image Source="{StaticResource Cog16Image}" VerticalAlignment="Center" Stretch="UniformToFill" />
+                    <xctk:DropDownButton.DropDownContent>
+                        <StackPanel Orientation="Vertical" Margin="6">
+                            <RadioButton Content="Shortest Route"
+                                         IsChecked="{Binding Source={x:Static uiMap:Map.RouteFinder}, Path=Options.RouteType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Shortest}"
+                                         Margin="2" />
+                            <RadioButton Content="Prefer Lowsec"
+                                         IsChecked="{Binding Source={x:Static uiMap:Map.RouteFinder}, Path=Options.RouteType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=PreferLow}"
+                                         Margin="2" />
+                            <RadioButton Content="Prefer Highsec"
+                                         IsChecked="{Binding Source={x:Static uiMap:Map.RouteFinder}, Path=Options.RouteType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=PreferHigh}"
+                                         Margin="2" />
+
+                            <Separator Height="3" Margin="-2,4" />
+
+                            <Slider Minimum="1" Maximum="100"
+                                    Value="{Binding Source={x:Static uiMap:Map.RouteFinder}, Path=Options.SecurityPenality}" />
+                            <TextBlock
+                                Text="{Binding Source={x:Static uiMap:Map.RouteFinder}, Path=Options.SecurityPenality,StringFormat='Security Penalty: {0}'}" />
+
+                            <Separator Height="3" Margin="-2,4" />
+                            <Slider Minimum="0" Maximum="3"
+                                    ToolTip="Select the number of systems around your route. If you select e.g. 2, the map will show all systems withing 2 jumps of every system on the route."
+                                    Value="{Binding Source={x:Static properties:Settings.Default}, Path=MapRangeAroundRoute}" />
+                            <TextBlock
+                                Text="{Binding Source={x:Static  properties:Settings.Default}, Path=MapRangeAroundRoute,StringFormat='Range around Route: {0}'}" />
+                            <Separator Height="3" Margin="-2,4" />
+                            <CheckBox
+                                IsChecked="{Binding Source={x:Static uiMap:Map.RouteFinder}, Path=Options.IsIgnoringWormholes}"
+                                Content="Ignore Wormholes"
+                                ToolTip="If active, wormholes are not considered for finding routes. Otherwise they are." />
+                        </StackPanel>
+                    </xctk:DropDownButton.DropDownContent>
+                </xctk:DropDownButton>
+                <Button x:Name="BtnClearDestination" Margin="4,0,0,0" Padding="4,2" Content="Clear Destination"
+                        Click="BtnClearDestination_OnClick" />
+            </StackPanel>
+        </Menu>
+
+        <xcad:DockingManager x:Name="DockManager" Grid.Row="1" Background="Transparent"
+                             DocumentPaneControlStyle="{StaticResource AvalonDock_ThemeMetro_DocumentPaneControlStyle}">
+
+            <xcad:LayoutRoot>
+
+                <xcad:LayoutPanel>
+                    <xcad:LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="250">
+                        <xcad:LayoutAnchorablePane DockWidth="250">
+
+                            <xcad:LayoutAnchorable Title="Last Local" x:Name="LastLocalAnchorable"
+                                                   CanClose="False" CanHide="True" CanAutoHide="False"
+                                                   ContentId="LastLocalAnchorable">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <ui:LocalTableControl x:Name="LastLocalTable" Grid.Row="1" />
+                                </Grid>
+                            </xcad:LayoutAnchorable>
+
+                            <xcad:LayoutAnchorable Title="Map Settings" x:Name="MapSettingsAnchorable"
+                                                   CanClose="False" CanHide="True" CanAutoHide="False"
+                                                   ContentId="MapSettingsAnchorable">
+                                <settings:MapSettingsControl />
+                            </xcad:LayoutAnchorable>
+
+                        </xcad:LayoutAnchorablePane>
+                        <xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorable Title="Ships on DScan"
+                                                   CanClose="False" CanHide="True" CanAutoHide="False"
+                                                   x:Name="DScanAggregator"
+                                                   ContentId="ShipsOnDScan">
+                                <uiMap:DScanShipAggregator x:Name="ShipAggregator" />
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutAnchorablePane>
+
+                    </xcad:LayoutAnchorablePaneGroup>
+                    <xcad:LayoutDocumentPane x:Name="MapPane">
+                        <xcad:LayoutDocument x:Name="MapDocument" Title="Map" CanClose="False" ContentId="Map">
+                            <xctk:BusyIndicator IsBusy="False" x:Name="MapBusyIndicator" Background="Transparent">
+                                <graphxctrl:ZoomControl x:Name="ZoomCtrl" Grid.Row="0" Grid.Column="0"
+                                                        ZoomSensitivity="18"
+                                                        ContextMenu="{StaticResource MapContextMenu}"
+                                                        Background="Transparent">
+                                    <uiMap:MapArea x:Name="MapArea"
+                                                   VertexDoubleClick="MapArea_VertexDoubleClick"
+                                                   VertexSelected="MapArea_OnVertexSelected" Background="Transparent" />
+                                </graphxctrl:ZoomControl>
+                            </xctk:BusyIndicator>
+                        </xcad:LayoutDocument>
+                        <xcad:LayoutAnchorable Title="POS Mapper" x:Name="PosMapperAnchorable"
+                                               CanClose="False" CanHide="True" CanAutoHide="False"
+                                               ContentId="PosMapperAnchorable"
+                                               IsActiveChanged="PosMapperAnchorable_OnIsActiveChanged">
+                            <Grid>
+
+                                <posMapper:PosMapperControl x:Name="PosMapper" />
+
+                            </Grid>
+                        </xcad:LayoutAnchorable>
+                        <xcad:LayoutAnchorable Title="DScan Locator" x:Name="DScanLocatorAnchorable"
+                                               CanClose="False" CanHide="True" CanAutoHide="False"
+                                               ContentId="DScanLocatorAnchorable"
+                                               IsActiveChanged="DScanLocatorAnchorable_OnIsActiveChanged">
+                            <Grid>
+                                <dScanLocator:DScanLocatorControl x:Name="DScanLocatorCtrl" />
+                            </Grid>
+                        </xcad:LayoutAnchorable>
+                    </xcad:LayoutDocumentPane>
+                    <xcad:LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="350">
+                        <xcad:LayoutAnchorablePane DockWidth="350">
+                            <xcad:LayoutAnchorable Title="Selected Local" x:Name="SelectedLocalAnchorable"
+                                                   CanClose="False" CanHide="True" CanAutoHide="False"
+                                                   ContentId="SelectedLocalAnchorable">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" x:Name="LastLocalUpdateText" />
+                                    <ui:LocalTableControl x:Name="LocalTable" Grid.Row="1" />
+                                </Grid>
+                            </xcad:LayoutAnchorable>
+                            <xcad:LayoutAnchorable Title="Notes for selected System"
+                                                   x:Name="SelectedSystemNotesAnchorable"
+                                                   CanClose="False" CanHide="True" CanAutoHide="False"
+                                                   ContentId="SelectedSystemNotesAnchorable">
+                                <Grid>
+                                    <uiMap:SystemNotesControl x:Name="SystemNotesCtrl" />
+                                </Grid>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutAnchorablePane>
+                        <xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorable ContentId="LastKillsInSystem" x:Name="LastKillsInSystem"
+                                                   Title="Kills in the last hour (zKillboard)"
+                                                   CanClose="False" CanHide="True" CanAutoHide="False">
+                                <xctk:BusyIndicator IsBusy="False" x:Name="LastKillsBusyIndicator">
+                                    <ui:KillsTable x:Name="KillsTable" />
+                                </xctk:BusyIndicator>
+                            </xcad:LayoutAnchorable>
+
+                        </xcad:LayoutAnchorablePane>
+
+                    </xcad:LayoutAnchorablePaneGroup>
+                </xcad:LayoutPanel>
+
+            </xcad:LayoutRoot>
+        </xcad:DockingManager>
+
+
+    </Grid>
+
+</Window>

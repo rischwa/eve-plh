@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="EveLocalChatAnalyser.Ui.Settings.MapSettingsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EveLocalChatAnalyser.Ui.Settings"
+             xmlns:colorCalculators="clr-namespace:EveLocalChatAnalyser.Ui.Map.Statistics.ColorCalculators"
+             xmlns:palettes="clr-namespace:EveLocalChatAnalyser.Ui.Map.Statistics.Palettes"
+             xmlns:triStateCalculators="clr-namespace:EveLocalChatAnalyser.Ui.Map.Statistics.TriStateCalculators"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:properties="clr-namespace:EveLocalChatAnalyser.Properties"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <StackPanel Orientation="Vertical">
+        <GroupBox Header="Visual Representation of System">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Metric:"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="0"  ItemsSource="{Binding Source={x:Static colorCalculators:IndexCalculatorCollection.ViewModels}}" SelectedValue="{Binding InnerCircleIndexModel.SelectedValue}"></ComboBox>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Color Palette:"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="1"  ItemsSource="{Binding Source={x:Static palettes:PaletteCollection.Values}}" SelectedValue="{Binding InnerCirclePaletteModel.SelectedValue}" >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <local:ColorPaletteDisplay></local:ColorPaletteDisplay>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Visual Representation of Outer Ring">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Metric:"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={x:Static colorCalculators:IndexCalculatorCollection.ViewModels}}" SelectedValue="{Binding OuterCircleIndexModel.SelectedValue}"></ComboBox>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Color Palette:"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="1"   ItemsSource="{Binding Source={x:Static palettes:PaletteCollection.Values}}" SelectedValue="{Binding OuterCirclePaletteModel.SelectedValue}" >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <local:ColorPaletteDisplay></local:ColorPaletteDisplay>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Visual Representation of Cross">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Metric:"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={x:Static triStateCalculators:TriStateCalculatorCollection.ViewModels}}" SelectedValue="{Binding TriStateSettingsViewModel.SelectedValue}"></ComboBox>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Color:"></Label>
+                <xctk:ColorPicker Grid.Row="1" Grid.Column="1" SelectedColor="{Binding Source={x:Static properties:Settings.Default}, Path=MapTriStateColor}"></xctk:ColorPicker>
+            </Grid>
+        </GroupBox>
+    </StackPanel>
+</UserControl>

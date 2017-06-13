@@ -1,0 +1,21 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.PosMapper.PosMapperDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="clr-namespace:EveLocalChatAnalyser.Ui"
+        xmlns:properties="clr-namespace:EveLocalChatAnalyser.Properties"
+        xmlns:posMapper="clr-namespace:EveLocalChatAnalyser.Ui.PosMapper"
+        Title="POS Mapper" 
+        Height="{Binding Source={x:Static properties:Settings.Default}, Path=POSMapperSize.Height}" 
+        Width="{Binding Source={x:Static properties:Settings.Default}, Path=POSMapperSize.Width}" 
+        Left="{Binding Source={x:Static properties:Settings.Default}, Path=POSMapperPosition.X}"
+        Top="{Binding Source={x:Static properties:Settings.Default}, Path=POSMapperPosition.Y}"
+           Background="{DynamicResource WindowBackgroundBrush}"
+        Topmost="True"
+        Style="{DynamicResource SkinWindowStyle}"
+        >
+    <Window.Resources>
+        <ResourceDictionary Source="../../Themes/EveUiWindowStyle.xaml"></ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <posMapper:PosMapperControl Grid.Row="0" x:Name="MyPosMapperControl"></posMapper:PosMapperControl>
+    </Grid>
+</Window>

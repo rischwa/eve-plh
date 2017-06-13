@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="EveLocalChatAnalyser.Ui.Map.SystemTooltipControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+             xmlns:local="clr-namespace:EveLocalChatAnalyser.Ui.Map"
+             xmlns:models="clr-namespace:EveLocalChatAnalyser.Ui.Models"
+             xmlns:ui="clr-namespace:EveLocalChatAnalyser.Ui"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance models:SolarSystemViewModel}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Themes/EveUiWindowStyle.xaml" />
+                <ResourceDictionary>
+                    <ui:VisibilityConverter x:Key="VisibilityConverter"></ui:VisibilityConverter>
+                    <system:Boolean x:Key="InvertBooleanValue">True</system:Boolean>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+           
+        </ResourceDictionary>
+       
+    </UserControl.Resources>
+    <UserControl.Background>
+        <SolidColorBrush Color="{DynamicResource WindowBackground}" />
+    </UserControl.Background>
+    <StackPanel Orientation="Vertical" Margin="0 0 0 6">
+        <TextBlock  TextAlignment="Center" Foreground="White" FontWeight="DemiBold" FontSize="16" ><Run Text="{Binding Name, Mode=OneWay}"></Run><Run Text=" ("></Run><Run Text="{Binding SecurityStr, Mode=OneWay}"></Run><Run Text=")"></Run></TextBlock>
+        <TextBlock Text="Stations" TextAlignment="Center" Background="{DynamicResource ContainerBackgroundBrush}"  Margin="0 8 0 0" Visibility="{Binding IsWormholeSystem, Converter={StaticResource VisibilityConverter}, ConverterParameter={StaticResource InvertBooleanValue}, Mode=OneWay}"/>
+        <Grid  Visibility="{Binding IsWormholeSystem, Converter={StaticResource VisibilityConverter}, ConverterParameter={StaticResource InvertBooleanValue}, Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"></ColumnDefinition><ColumnDefinition Width="*"></ColumnDefinition></Grid.ColumnDefinitions>
+            <TextBlock Margin="8 0 0 0" Text="# Stations:" TextAlignment="Left" />
+            <TextBlock Margin="8 0 8 0" Text="{Binding Stations.Count, Mode=OneWay}"  Grid.Row="0" Grid.Column="1"></TextBlock>
+
+            <TextBlock Margin="8 0 0 0" Text="Rep-Stations:" TextAlignment="Left" Grid.Row="1" Grid.Column="0" />
+            <TextBlock Margin="8 0 8 0" Text="{Binding StationsWithRepairFacilityTooltip, Mode=OneWay}" Grid.Row="1" Grid.Column="1"></TextBlock>
+        </Grid>
+
+        <TextBlock Text="Wormhole" TextAlignment="Center" Background="{DynamicResource ContainerBackgroundBrush}"  Margin="0 8 0 0" Visibility="{Binding IsWormholeSystem, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+        <TextBlock Margin="8 0 8 0" Visibility="{Binding IsWormholeSystem, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" Text="{Binding WormholeInfoTooltip, Mode=OneWay }">
+
+        </TextBlock>
+
+        <TextBlock Text="Activity" TextAlignment="Center" Background="{DynamicResource ContainerBackgroundBrush}" Margin="0 8 0 0"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Margin="8 0 0 0" Text="PVE Kills:" TextAlignment="Left" />
+            <TextBlock Margin="8 0 0 0" Text="{Binding Kills.NpcKillCount, Mode=OneWay}"  Grid.Row="0" Grid.Column="1"></TextBlock>
+
+            <TextBlock  Margin="24 0 0 0"  Text="# Jumps:" TextAlignment="Left"  Grid.Row="0" Grid.Column="2"/>
+            <TextBlock Margin="8 0 8 0" Text="{Binding JumpCount, Mode=OneWay}"  Grid.Row="0" Grid.Column="3"></TextBlock>
+
+            <TextBlock Margin="24 0 0 0" Text="POD Kills:" TextAlignment="Left"  Grid.Row="1" Grid.Column="2"/>
+            <TextBlock Margin="8 0 8 0" Text="{Binding PodKillCount, Mode=OneWay}"  Grid.Row="1" Grid.Column="3"></TextBlock>
+
+            <TextBlock   Margin="8 0 0 0" Text="PVP Kills:" TextAlignment="Left" Grid.Row="1" Grid.Column="0"/>
+            <TextBlock Margin="8 0 0 0" Text="{Binding Kills.ShipKillCount, Mode=OneWay}" Grid.Row="1" Grid.Column="1"></TextBlock>
+        </Grid>
+        <TextBlock Text="Ownership" TextAlignment="Center" Background="{DynamicResource ContainerBackgroundBrush}"  Margin="0 8 0 0"/>
+        <TextBlock  Margin="8 0 8 0" Text="{Binding Sovereignity.SovereignityHolder, Mode=OneWay}"></TextBlock>
+        <Image  Margin="0 12 0 0" Source="/Resources/faction_warfare.png" Height="50" Visibility="{Binding Sovereignity.IsFactionWarefareSystem,Converter={StaticResource VisibilityConverter}, Mode=OneWay}"></Image>
+
+    </StackPanel>
+</UserControl>

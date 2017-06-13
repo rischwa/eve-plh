@@ -1,0 +1,302 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.Settings.SettingsPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:ui="clr-namespace:EveLocalChatAnalyser.Ui"
+         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:properties="clr-namespace:EveLocalChatAnalyser.Properties"
+        xmlns:settings="clr-namespace:EveLocalChatAnalyser.Ui.Settings"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:statistics="clr-namespace:EveLocalChatAnalyser.Ui.Map.Statistics"
+        xmlns:palettes="clr-namespace:EveLocalChatAnalyser.Ui.Map.Statistics.Palettes"
+        xmlns:colorCalculators="clr-namespace:EveLocalChatAnalyser.Ui.Map.Statistics.ColorCalculators"
+        xmlns:triStateCalculators="clr-namespace:EveLocalChatAnalyser.Ui.Map.Statistics.TriStateCalculators"
+        Title="Settings" Height="557.192" Width="427.068" Topmost="True" Style="{DynamicResource SkinWindowStyle}">
+    <Window.Resources>
+        <ResourceDictionary Source="../../Themes/EveUiWindowStyle.xaml">
+        </ResourceDictionary>
+    </Window.Resources>
+    <Window.Icon>../../Resources/cog_d3d3d3_32.png</Window.Icon>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="Global" ToolTip="Global settings e.g. for visual representation">
+                <StackPanel>
+                    <GroupBox Header="Style" Grid.Row="1"  >
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <CheckBox x:Name="DrawBackgroundDependingOnStatus" Grid.Row ="0" VerticalAlignment="Center" Click="DrawBackgroundDependingOnStatus_Click" Content="Background color depends on status" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=IsDrawingBackgroundDependingOnStatus}" ToolTip="The background color of character rows indicate their status (green=[just joined local], red=[just left local], beige=[stayed in local])" />
+                            <CheckBox x:Name="ShowExited" Grid.Row="1" VerticalAlignment="Center" IsEnabled="{Binding IsChecked, ElementName=DrawBackgroundDependingOnStatus}" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=IsShowingExitedCharacters}" Content="Show people who just left local" ToolTip="If enabled, people who left local since the last update are shown, otherwise they aren't"/>
+                            <CheckBox x:Name="ShowSecurityStatus" Grid.Row="2" VerticalAlignment="Center" Content="Show outlaws (security status &lt;= -5.0) as red" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=IsShowingSecurityStatus}" ToolTip="People with a sec. status of -5 or less are shown with a red text color"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Killboard Integration" Grid.Row="3" Grid.RowSpan="1">
+                        <StackPanel>
+                            <CheckBox x:Name="chkUseKillboard" Content="Use automatic killboard analysis" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=IsUsingKillboardAnalysis}" ToolTip="If enabled, killboards get automatically analysed. You can see the results while hovering over a char. An additional image column gets shown, which shows the most important tag of the character (e.g. cynochar or ganker)."/>
+                            <GroupBox Header="External Viewer (activate with double click on character)" ToolTip="By double clicking on a character, an external browser with the killboard of the character gets opened. You can choose which killboard is used for this.">
+                                <Grid HorizontalAlignment="Left" Height="Auto" VerticalAlignment="Center">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width ="*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <RadioButton Name="RdoEveKill" Grid.Row="1" VerticalAlignment="Center" Content="NewEden" ToolTip="Open the character's killboard in http://eve-kill.net"/>
+                                    <RadioButton Name="RdoZKillboard" Grid.Row="2" VerticalAlignment="Center" Content="zKillboard" ToolTip="Open the character's killboard in https://zkillboard.com"/>
+                                  
+                                </Grid>
+                            </GroupBox>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Coalitions" Grid.Row="2" Padding="0,4,0,0" ToolTip="Manage coalitions">
+                        <StackPanel>
+                            <CheckBox x:Name="ChkIsShowingCoalitionColumn" Content="Show coalition column" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=IsShowingCoalitionsColumn}" ToolTip="If enabled, an additional column showing the characters coalition is shown"></CheckBox>
+                            <Button x:Name="BtnEditCoalitions" Content="Edit additional custom _coalition definitions" Margin="0,4,0,0" Width="227" HorizontalAlignment="Left" Click="BtnEditCoalitions_Click" ToolTip="Coalitions get automatically retrieved from http://rischwa.net/coalitions. Here you can additionally create custom coalitions or overwrite the automatically retrieved coalitions."></Button>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="GUI" Grid.Row="6" Grid.RowSpan="1" >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Font Size:" Grid.Row="0" ToolTip="Change the font size"/>
+                            <settings:MySlider x:Name="sliderFontSize"  Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" Minimum="5" Maximum="32" SmallChange="1" Value="12" AutoToolTipPlacement="BottomRight" TickPlacement="BottomRight" ToolTip="Change the font size" >
+
+                            </settings:MySlider>
+
+                            <Label Content="Window Opacity:" Grid.Row="1" ToolTip="Opacity of the window background (turn to 0 for fully transparent/click through window background)"/>
+                            <Slider x:Name="SliderOpacity" TickFrequency="0.1" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" Minimum="0.0" Maximum="1.0" SmallChange="0.01" LargeChange="0.2" Value="{Binding Source={x:Static properties:Settings.Default}, Path=WindowBackgroundTransparencyLevel}" AutoToolTipPlacement="BottomRight" TickPlacement="BottomRight" ToolTip="Change the main window opacity (0 = fully transparent / click through)" >
+
+                            </Slider>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Grid.Row="8" Header="Tracking of Player Positions" ToolTipService.ShowDuration="12000"  ToolTip="You can enable multiple features that depend on your position,&#xA;e.g. a map of your surrounding systems giving you information on (kb)activity.">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Button Grid.Row="0" x:Name="BtnSelectPositionTrackingCharacters" Content="Select Characters for Automatic Position Tracking" Margin="4,8,4,8"  HorizontalAlignment="Left" Padding="4,4" Click="BtnSelectPositionTrackingCharacters_Click" ToolTip="You have to select which characters positions should be tracked,&#xA;so if you e.g. switch between a scout a main char, PLH knows where your scans come from.&#xA;While you probably do not want PLH to switch to Jita, if you check your trading alt."></Button>
+                            <GroupBox Grid.Row="1" Header="IGB based tracking (only required for WHs)"  ToolTip="There is another method to track your position by opening a tiny webpage in your ingame browser (IGB).&#xA;If you move through wormholes you need to use this method for PLH to be able to track you.">
+                                <StackPanel>
+                                    <Button Content="Copy tracking URL for IGB to clipboard" Name="BtnCopyTrackingUrlToClipboard" Width="250" Margin="4,4,4,0" HorizontalAlignment="Left" Click="BtnCopyTrackingUrlToClipboard_Click"></Button>
+                                </StackPanel>
+                            </GroupBox>
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Profile" ToolTip="Some settings CAN be changed depending on your currently active eve character/client. These settings are stored in profiles. The default profile will get activated for every character you don't explicitly specify." >
+                <Grid  >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="20"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                        <DockPanel HorizontalAlignment="Stretch" Height="Auto">
+                            <Label Content="Active profile:" Margin="0,4,0,0"></Label>
+                            <Button x:Name="BtnRemoveProfile" Margin="0,4,0,0" Content="Remove" DockPanel.Dock="Right" HorizontalAlignment="Right" ToolTip="Remove the current profile (the default profile can't be removed)" Padding="4,1" Click="BtnRemoveProfile_Click"></Button>
+                            <Button x:Name="BtnNewProfile"   Content="New" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="2,4,2,0" ToolTip="Create a new profile, initial settings are copied from the default profile" Click="BtnNewProfile_Click" Padding="4,1"></Button>
+                            <ComboBox x:Name="CboProfile" Margin="0,4,0,0" HorizontalAlignment="Stretch" DockPanel.Dock="Top" SelectionChanged="CboProfile_SelectionChanged"/>
+                        </DockPanel>
+                        <GroupBox Header="Automatic profile switching" ToolTip="Profiles can be automatically switched depending on the currently active character/eve client" >
+                            <StackPanel>
+                                <CheckBox x:Name="ChkSwitchProfiles" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=IsSwitchingActiveProfileAutomatically}" ToolTip="Lets you specify which profile you want to use for which EVE character. Switching is done automatically by watching the active window title (works for fullscreen/borderless windows, too)" Margin="0,10,0,0">Automatically switch profiles depending on active client/character</CheckBox>
+                                <DockPanel HorizontalAlignment="Stretch" Height="Auto" x:Name="DockProfileCharacters" Margin="0,4,0,0" IsEnabled="{Binding Source={x:Static properties:Settings.Default}, Path=IsSwitchingActiveProfileAutomatically}">
+                                    <Label>Automatically activate for characters:</Label>
+                                    <TextBox x:Name="TxtProfileCharacters" Text="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=CharactersToActivateProfileFor}" ToolTip="A list of comma separated character names, for which the current profile should automatically be activated, if a client with that char becomes active. If no character name matches, the Default profile will be activated"></TextBox>
+                                </DockPanel>
+                                <TextBlock x:Name="LblSwitchProfilesDescription" IsEnabled="{Binding Source={x:Static properties:Settings.Default}, Path=IsSwitchingActiveProfileAutomatically}" TextWrapping="Wrap" Margin="0,10,0,0" FontStyle="Italic"><Run Text="The Default profile will get activated for all characters not specified in other profiles."/><LineBreak/><Run Text="See the other profiles to set the characters they should be used for."/></TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                    <GroupBox Grid.Row="2" Header="Standings" >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width ="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width ="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox x:Name="HideBlues" Grid.ColumnSpan="2" Grid.Row="0" VerticalAlignment="Center" Content="Hide people with blue standing" IsChecked="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=IsHidingBlues}" ToolTip="Hide people with blue standings to you. You need to provide an API key, so EVE PLH is able to fetch your standings."/>
+
+                            <Label Content="Fetch standings from:" HorizontalAlignment="Left" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top" />
+                            <Label  HorizontalAlignment="Right" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top" >
+                                <Hyperlink NavigateUri="https://community.eveonline.com/support/api-key/CreatePredefined?accessMask=8388624" RequestNavigate="Hyperlink_RequestNavigate">Create API Key</Hyperlink>
+                            </Label>
+                            <Label Content="KeyID:" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" />
+                            <TextBox x:Name="TxtKeyId" Grid.Row="2" Grid.Column="1" Margin="0,0,266,0" Text="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=KeyId}"/>
+
+                            <Label Content="vCode:" HorizontalAlignment="Left" Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" />
+                            <TextBox x:Name="TxtVCode" Grid.Row="3" Grid.Column="1" Text="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=VCode}" MaxLength="64"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Faction Warfare" Grid.Row="3" Grid.RowSpan="1">
+                        <StackPanel>
+                            <CheckBox x:Name="ShowFaction"  VerticalAlignment="Center" Content="Show FW-faction in extra column" IsChecked="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=IsShowingFaction}" ToolTip="An extra column is shown, containing their respective faction icons for FW pilots" />
+                            <CheckBox x:Name="ShowAmarr" VerticalAlignment="Center" Content="Show Amarr pilots" IsChecked="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=IsShowingAmarr}" ToolTip="If enabled, pilots of the Amarr militia get shown, otherwise they don't."/>
+                            <CheckBox x:Name="ShowCaldari" VerticalAlignment="Center" Content="Show Caldari pilots" IsChecked="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=IsShowingCaldari}" ToolTip="If enabled, pilots of the Caldari militia get shown, otherwise they don't."/>
+                            <CheckBox x:Name="ShowGallente" VerticalAlignment="Center" Content="Show Gallente pilots" IsChecked="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=IsShowingGallente}" ToolTip="If enabled, pilots of the Gallente militia get shown, otherwise they don't."/>
+                            <CheckBox x:Name="ShowMinmatar" VerticalAlignment="Center" Content="Show Minmatar pilots" IsChecked="{Binding Source={x:Static properties:ActiveProfile.Default}, Path=IsShowingMinmatar}" ToolTip="If enabled, pilots of the Minmatar militia get shown, otherwise they don't."/>
+                        </StackPanel>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Shortcuts" ToolTip="Global shortcuts for PLH">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <CheckBox x:Name="ChkUseVoiceRecognition"   VerticalAlignment="Center" Content="Use Voice Recognition" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=AreVoiceCommandsEnabled}" ToolTip="If enabled, you can use voice commands as shortcuts. Might not work on all systems." />
+                    <TextBlock Margin="0,4,0,16" Grid.Row="1" IsEnabled="{Binding Source={x:Static properties:Settings.Default}, Path=AreVoiceCommandsEnabled}">Say "Test voice recognition one two" to check if voice recognition works.</TextBlock>
+
+                    <settings:ShortcutEditor Grid.Row="2" x:Name="ShortcutEditorMinimizeAll" ToolTip="Toggle between 'minimize all windows' and 'restore windows to their previous state'" LabelText="Toggle minimize all windows:" ShortcutText="{Binding Source={x:Static properties:Settings.Default}, Path=ShortcutToggleMinimizeAll, Mode=TwoWay}">
+                    </settings:ShortcutEditor>
+                    <Grid  IsEnabled="{Binding Source={x:Static properties:Settings.Default}, Path=AreVoiceCommandsEnabled}" Grid.Row="3" ToolTip="Voice command for toggling minimize all windows. Can be a whole phrase.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition> 
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label IsEnabled="{Binding Source={x:Static properties:Settings.Default}, Path=AreVoiceCommandsEnabled}" Content="Toggle minimize all windows voice command:"></Label>
+                        <TextBox IsEnabled="{Binding Source={x:Static properties:Settings.Default}, Path=AreVoiceCommandsEnabled}" Grid.Column="1" Text="{Binding Source={x:Static properties:Settings.Default}, Path=VoiceCommandToggleMinimze}" ></TextBox>
+                    </Grid>
+
+                    <settings:ShortcutEditor Grid.Row="4" Margin="0,12,0,0" x:Name="ShortcutEditorQuickAction" ToolTip="Show quick info window on the last copy to clipboard, e.g. DScan aggregation" LabelText="Quick Action:" ShortcutText="{Binding Source={x:Static properties:Settings.Default}, Path=ShortcutQuickAction, Mode=TwoWay}">
+                    </settings:ShortcutEditor>
+
+                    <Grid Grid.Row="5" ToolTip="Voice command for quick action depending on last clipboard content. Can be a whole phrase." IsEnabled="{Binding Source={x:Static properties:Settings.Default}, Path=AreVoiceCommandsEnabled}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label IsEnabled="{Binding Source={x:Static properties:Settings.Default}, Path=AreVoiceCommandsEnabled}" Content="Quick Action Voice Command:"></Label>
+                        <TextBox   IsEnabled="{Binding Source={x:Static properties:Settings.Default}, Path=AreVoiceCommandsEnabled}" Grid.Column="1" Text="{Binding Source={x:Static properties:Settings.Default}, Path=VoiceCommandQuickAction}" ></TextBox>
+                    </Grid>
+                </Grid>
+
+            </TabItem>
+            <TabItem Header="Map" ToolTip="Settings for PLH's Map View">
+               <StackPanel>
+                   <settings:MapSettingsControl></settings:MapSettingsControl>
+                    <GroupBox Header="Resulting Look">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Text="Low Values" Grid.Column="0" Grid.Row="0" TextAlignment="Center" Margin="0 0 0 8"></TextBlock>
+                            <TextBlock Text="Medium Values" Grid.Column="1" Grid.Row="0" TextAlignment="Center"></TextBlock>
+                            <TextBlock Text="High Values" Grid.Column="2" Grid.Row="0" TextAlignment="Center"></TextBlock>
+
+                            <Grid Grid.Column="0" Grid.Row="1" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                         AncestorType=Window},Path=SystemMinValueExampleModel}">
+                                <DockPanel MaxWidth="150" Height="56" >
+                                    <TextBlock HorizontalAlignment="Center" Text="Jita" DockPanel.Dock="Bottom" FontSize="16" Foreground="LightGreen"></TextBlock>
+                                    
+                                    <Canvas Width="32">
+                                        <Ellipse Width="32" Height="32" Stroke="{Binding CircleBorderColor}" StrokeThickness="3" >
+                                        </Ellipse>
+                                        <Ellipse Width="20" Height="20" Canvas.Top="6"  Canvas.Left="6" Fill="{Binding InnerCircleColor}">
+
+                                        </Ellipse>
+                                    </Canvas>
+
+                                </DockPanel>
+                            </Grid>
+                            <Grid Grid.Column="1" Grid.Row="1" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                         AncestorType=Window},Path=SystemMidValueExampleModel}">
+                                <DockPanel MaxWidth="150" Height="56" >
+                                    <TextBlock HorizontalAlignment="Center" Text="Amamake" DockPanel.Dock="Bottom" FontSize="16" Foreground="Orange"></TextBlock>
+
+                                    <Canvas Width="32">
+                                        <Ellipse Width="32" Height="32" Stroke="{Binding CircleBorderColor}" StrokeThickness="3" >
+                                        </Ellipse>
+                                        <Ellipse Width="20" Height="20" Canvas.Top="6"  Canvas.Left="6" Fill="{Binding InnerCircleColor}">
+
+                                        </Ellipse>
+                                        <Line X2="6" X1="26" Y1="6" Y2="26" StrokeThickness="2" Visibility="{Binding TriStateVisibility}">
+                                            <Line.Stroke>
+                                                <SolidColorBrush Color="{Binding Source={x:Static properties:Settings.Default},Path=MapTriStateColor}"></SolidColorBrush>
+                                            </Line.Stroke>
+                                        </Line>
+                                    </Canvas>
+
+                                </DockPanel>
+                            </Grid>
+                            <Grid Grid.Column="2" Grid.Row="1" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                         AncestorType=Window},Path=SystemMaxValueExampleModel}">
+                                <DockPanel MaxWidth="150" Height="56" >
+                                    <TextBlock HorizontalAlignment="Center" Text="CL-85V" DockPanel.Dock="Bottom" FontSize="16" Foreground="Red"></TextBlock>
+
+                                    <Canvas Width="32">
+                                        <Ellipse Width="32" Height="32" Stroke="{Binding CircleBorderColor}" StrokeThickness="3" >
+                                        </Ellipse>
+                                        <Ellipse Width="20" Height="20" Canvas.Top="6"  Canvas.Left="6" Fill="{Binding InnerCircleColor}">
+
+                                        </Ellipse>
+                                        <Line X1="6" X2="26" Y1="6" Y2="26"  StrokeThickness="2" Visibility="{Binding TriStateVisibility}">
+                                            <Line.Stroke>
+                                                <SolidColorBrush Color="{Binding Source={x:Static properties:Settings.Default},Path=MapTriStateColor}"></SolidColorBrush>
+                                            </Line.Stroke>
+                                        </Line>
+                                        <Line X2="6" X1="26" Y1="6" Y2="26"  StrokeThickness="2" Visibility="{Binding TriStateVisibility}">
+                                            <Line.Stroke>
+                                                <SolidColorBrush Color="{Binding Source={x:Static properties:Settings.Default},Path=MapTriStateColor}"></SolidColorBrush>
+                                            </Line.Stroke>
+                                        </Line>
+                                    </Canvas>
+
+                                </DockPanel>
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+
+
+        <Button Grid.Row="2" Click="OkClicked" Height="30">Ok</Button>
+
+
+    </Grid>
+</Window>
+    

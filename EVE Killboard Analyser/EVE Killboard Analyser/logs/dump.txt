@@ -1,0 +1,3 @@
+https://zkillboard.com/api/losses/characterID/92704489/
+Unexpected character encountered while parsing value: S. Path '', line 0, position 0.
+SQLSTATE[HY000] [2003] Can't connect to MySQL server on '10.10.10.214' (111)

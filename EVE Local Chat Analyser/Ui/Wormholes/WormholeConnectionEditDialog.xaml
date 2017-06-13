@@ -1,0 +1,83 @@
+﻿<Window x:Class="EveLocalChatAnalyser.Ui.Wormholes.WormholeConnectionEditDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EveLocalChatAnalyser.Ui.Wormholes"
+        mc:Ignorable="d"
+        Title="Edit Wormhole Connection" Height="276" Width="304.001" Topmost="True" Style="{DynamicResource SkinWindowStyle}">
+  <Window.Resources>
+      
+        <ResourceDictionary Source="../../Themes/EveUiWindowStyle.xaml"></ResourceDictionary>
+  </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="System1" Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" x:Name="TxtOldSystem"></TextBlock>
+
+
+        <DockPanel Grid.Row="1" >
+            <Label Content="Signature:" DockPanel.Dock="Left"></Label>
+            <ComboBox IsEditable="True" x:Name="CboOldSystem" ></ComboBox>
+        </DockPanel>
+
+        <Line  Grid.Row="2"  Stretch="Fill" X1="0" Y1="0"
+         X2="0" Y2="1" Stroke="LightGray"
+    StrokeThickness="4" ></Line>
+
+
+        <DockPanel Grid.Row="3" >
+            <Label Content="Signature:" DockPanel.Dock="Left"></Label>
+            <ComboBox IsEditable="True" x:Name="CboNewSystem"></ComboBox>
+        </DockPanel>
+
+        
+
+        <TextBlock Text="System2" Grid.Row="4" HorizontalAlignment="Center" FontWeight="Bold"  x:Name="TxtNewSystem"></TextBlock>
+        
+        <GroupBox Header="Lifetime" Grid.Row="5" Margin="0,4" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <RadioButton Content="Forming" Grid.Column="0" IsChecked="{Binding Path=LastLivetimeUpdate.LivetimeStatus, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Forming}"></RadioButton>
+                <RadioButton Content="Main" Grid.Column="1" IsChecked="{Binding Path=LastLivetimeUpdate.LivetimeStatus, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Main}"></RadioButton>
+                <RadioButton Content="Critical" Grid.Column="2" IsChecked="{Binding Path=LastLivetimeUpdate.LivetimeStatus, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Critical}"></RadioButton>
+            </Grid>
+        </GroupBox>
+
+
+        <GroupBox Header="Mass" Grid.Row="6" Margin="0,4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <RadioButton Content="Full" Grid.Column="0" IsChecked="{Binding Path=MassStatus, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Full}"></RadioButton>
+                <RadioButton Content="Reduced" Grid.Column="1" IsChecked="{Binding Path=MassStatus, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Reduced}"></RadioButton>
+                <RadioButton Content="Critical" Grid.Column="2" IsChecked="{Binding Path=MassStatus, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Critical}"></RadioButton>
+            </Grid>
+        </GroupBox>
+
+
+
+        <Button Content="Remove this Connection" Grid.Row="7" HorizontalAlignment="Left" Padding="4" Margin="2" x:Name="BtnDeleteConnection" Click="BtnDeleteConnection_OnClick"></Button>
+        <StackPanel  HorizontalAlignment="Right" Grid.Row="7" Orientation="Horizontal">
+        <Button Content="_Ok" IsDefault="True" Padding="8,4" Margin="2" x:Name="BtnOk" Click="BtnOk_Click">
+        </Button>
+        <Button Content="_Cancel" Grid.Row="7" Padding="4" Margin="2" x:Name="BtnCancel" Click="BtnCancel_Click"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

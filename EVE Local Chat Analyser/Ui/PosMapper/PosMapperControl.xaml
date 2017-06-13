@@ -1,0 +1,128 @@
+﻿<UserControl x:Class="EveLocalChatAnalyser.Ui.PosMapper.PosMapperControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="clr-namespace:EveLocalChatAnalyser.Ui"
+             xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+             mc:Ignorable="d"  >
+    <UserControl.Resources>
+        <ui:MoonItemGroupConverter x:Key="MoonItemGroupConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <xctk:BusyIndicator IsBusy="False" x:Name="PosMapperBusyIndicator" Grid.Row="0">
+            <xctk:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <TextBlock Text="Click to activate" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </DataTemplate>
+            </xctk:BusyIndicator.BusyContentTemplate>
+            <xctk:BusyIndicator.ProgressBarStyle>
+                <Style TargetType="ProgressBar">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </xctk:BusyIndicator.ProgressBarStyle>
+            
+        
+    <DockPanel LastChildFill="True">
+        <TextBlock DockPanel.Dock="Top" x:Name="TxtInfo" Margin="2" TextWrapping="Wrap"></TextBlock>
+            
+        
+        <Grid DockPanel.Dock="Bottom" Margin="2,4" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+            </Grid.RowDefinitions>
+            <ProgressBar x:Name="ProgressScan" Minimum="0"/>
+            <TextBlock x:Name="TxtScanProgress" HorizontalAlignment="Center" Panel.ZIndex="10" Text="No DScan copied yet"></TextBlock>
+            <Button Grid.Row="1" Content="_Reset" x:Name="BtnReset" Click="BtnReset_Click" VerticalContentAlignment="Center" FontSize="14" HorizontalAlignment="Right" Width="140" Padding="4,2" Margin="0,4,0,0"></Button>
+
+
+
+            <xctk:DropDownButton Grid.Row="1" x:Name="BtnCopyToClipboard" Content="Copy to Clipboard" FontSize="14" HorizontalAlignment="Left" Margin="0,4,0,0" Padding="6,0,6,0" >
+                <xctk:DropDownButton.DropDownContent >
+                    <StackPanel Orientation="Vertical">
+                        <Button FontSize="12" Content="All Moons" Click="BtnCopyToClipboardWithEmptyMoons_Click" Padding="4" Margin="0,0,0,4"></Button>
+                        <Button FontSize="12" Content="Moons with Towers" Click="BtnCopyToClipboard_Click"  Padding="4" Margin="0,0,0,4"></Button>
+                        <Button FontSize="12" Content="Selected Moons" Padding="4" Click="BtnCopySelectionToClipboard_Click" ></Button>
+                    </StackPanel>
+                </xctk:DropDownButton.DropDownContent>
+            </xctk:DropDownButton>
+        </Grid>
+
+        <ScrollViewer x:Name="ScrollMoons" PreviewMouseWheel="ScrollMoons_PreviewMouseWheel">
+            <DataGrid x:Name="DataMoons" AutoGenerateColumns="False" IsReadOnly="True" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Moon" Binding="{Binding MoonName}" ></DataGridTextColumn>
+                    <DataGridTextColumn Header="POS" Binding="{Binding TowerType}"></DataGridTextColumn>
+                    <DataGridTemplateColumn Header="FF">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Border   BorderBrush="LightGray"
+                                Background="{Binding TowerStatusBackground}"
+                                CornerRadius="6"
+                                BorderThickness="1">
+                                        <TextBox IsReadOnly="True" Text="{Binding TowerStatus, Mode=OneWay}" Background="Transparent" Foreground="White" FontWeight="Bold" BorderThickness="0">
+
+                                        </TextBox>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="POS Name" Binding="{Binding TowerName}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Time of Scan" Binding="{Binding ScanTimeString}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="#Lootable" Binding="{Binding LootableModuleCount}"></DataGridTextColumn>
+                </DataGrid.Columns>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <DataGrid Margin="4" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding TestAggregatedItems}" VerticalScrollBarVisibility="Disabled" >
+
+                            <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Type" Binding="{Binding Name}" Foreground="White">
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="Control">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" Foreground="White">
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="Control">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                            <DataGrid.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                        <Expander>
+                                                            <Expander.Header>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="100"/>
+                                                                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding Path=., Converter={StaticResource MoonItemGroupConverter}}"/>
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <ItemsPresenter />
+                                                        </Expander>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </DataGrid.GroupStyle>
+                        </DataGrid>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+            </DataGrid>
+        </ScrollViewer>
+    </DockPanel>
+        </xctk:BusyIndicator>
+    </Grid>
+</UserControl>
