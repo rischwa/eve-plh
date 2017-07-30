@@ -910,6 +910,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GraphX\GraphX.Logic\GraphX.Logic.csproj">
+      <Project>{35f09d76-fdbe-4854-9dfc-961185c53b57}</Project>
+      <Name>GraphX.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LiteDB\LiteDB.csproj">
+      <Project>{e808051a-83b7-4fa9-b004-d064ea162b60}</Project>
+      <Name>LiteDB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PLHLib\PLHLib.csproj">
       <Project>{44774517-d919-4bc9-ab94-f3087bd25aac}</Project>
       <Name>PLHLib</Name>
