@@ -29,6 +29,9 @@
                     <LineBreak/>
                 </Paragraph>
                 <Paragraph Margin="Auto,Auto,0,Auto">
+                    <Run  Text="Fixed bugs related to new DScan format (one more column in the scanner window). POS mapper and DScan Locator should work now. Be warned this isn't tested though, because I don't play anymore. Thx to GhostOfAebeAmraen for the hint."/>
+                </Paragraph>
+                <Paragraph Margin="Auto,Auto,0,Auto">
                     <Run FontWeight="Bold" Text="Please do not contact me in game, as I do not play it atm and don't check my in game mails!"/>
                 </Paragraph>
                 <Paragraph Margin="Auto,Auto,0,Auto">

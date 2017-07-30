@@ -37,15 +37,15 @@ namespace EveLocalChatAnalyser.Ui.Models
                 throw new ArgumentException();
             }
             var cells = dscanLine.Split('\t');
-            if (cells.Length != 3)
+            if (cells.Length != 4)
             {
                 throw new ArgumentException();
             }
 
             //in the german client everything ends with *
-            Name = cells[0];
-            Type = cells[1].EndsWith("*") ? cells[1].Substring(0, cells[1].Length - 1) : cells[1];
-            Distance = new Distance(cells[2]);
+            Name = cells[1];
+            Type = cells[2].EndsWith("*") ? cells[2].Substring(0, cells[2].Length - 1) : cells[2];
+            Distance = new Distance(cells[3]);
         }
 
         public Distance Distance { get;  set; }

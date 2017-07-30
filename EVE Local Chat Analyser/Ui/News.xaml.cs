@@ -11,7 +11,7 @@ namespace EveLocalChatAnalyser.Ui
     public partial class News : Window
     {
 
-        public const int CURRENT_NEWS_VERSION = 90;
+        public const int CURRENT_NEWS_VERSION = 91;
         public News()
         {
             InitializeComponent();
