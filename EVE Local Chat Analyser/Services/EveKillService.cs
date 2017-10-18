@@ -11,14 +11,14 @@ namespace EveLocalChatAnalyser.Services
     {
         public void OpenForCharacter(IEveCharacter character)
         {
-            var url = "https://neweden.xyz/character/" + character.Id + "/";
+            var url = "https://zkillboard.com/charactor/search/" + character.Id + "/";
 
             Process.Start(url);
         }
 
         public void OpenForSystem(SolarSystemViewModel solarSystem)
         {
-            var url = "https://neweden.xyz/system/" + solarSystem.ID + "/";
+            var url = "https://zkillboard.com/system/" + solarSystem.ID + "/";
 
             Process.Start(url);
         }
